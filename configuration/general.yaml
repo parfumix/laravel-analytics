@@ -4,4 +4,7 @@ default: google
 # here you can declare you drivers .
 drivers:
   google:
-    - class: Laravel\Analytics\Drivers\Google
+    class: Laravel\Analytics\Drivers\Google
+    client_id: your_client_id
+    email_address: email_address_services_account
+    certificate: path_to_certificate
