@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Analytics;
+namespace Laravel\Analytics\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
