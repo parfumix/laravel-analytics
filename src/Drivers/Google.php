@@ -13,7 +13,7 @@ class Google extends Driver implements DriverAble {
     /**
      * @var
      */
-    protected $profileId;
+    protected $viewId;
 
     /**
      * Set sdk .
@@ -42,9 +42,9 @@ class Google extends Driver implements DriverAble {
 
         $this->setSdk($service);
 
-        if( $this->has('profile_id') )
-            $this->setProfileId(
-                $this->get('profile_id')
+        if( $this->has('view_id') )
+            $this->setViewId(
+                $this->get('view_id')
             );
 
         return $this;
@@ -54,11 +54,11 @@ class Google extends Driver implements DriverAble {
     /**
      * Set profile ID .
      *
-     * @param $profileId
+     * @param $viewId
      * @return $this
      */
-    public function setProfileId($profileId) {
-        $this->profileId = 'ga:' . $profileId;
+    public function setViewId($viewId) {
+        $this->viewId = 'ga:' . $viewId;
 
         return $this;
     }
@@ -68,7 +68,64 @@ class Google extends Driver implements DriverAble {
      *
      * @return mixed
      */
-    public function getProfileId() {
-        return $this->profileId;
+    public function getViewId() {
+        return $this->viewId;
+    }
+
+    /**
+     * Perform query .
+     *
+     * @param $start
+     * @param $end
+     * @param $metrics
+     * @param null $viewId
+     * @param array $others
+     * @return mixed
+     */
+    protected function performQuery($start, $end, $metrics, $viewId = null, array $others = array()) {
+        #@todo use cache for future .
+        return $this->getSdk()->data_ga->get(
+            isset($viewId) ? $viewId : $this->getviewId(),
+            $start,
+            $end,
+            $metrics,
+            $others
+        );
+    }
+
+
+    /**
+     * Get total visitors for specific period .
+     *
+     * @param string $start
+     * @param string $end
+     * @param string $max
+     * @return mixed
+     */
+    public function totalVisitors($start, $end = null, $max = null) {
+        if( is_null($end) )
+            $end = date('Y-m-d');
+
+        $results = $this->performQuery($start, $end, 'ga:visits', $this->getviewId(), ['dimensions' => 'ga:date']);
+
+        return array_map(function($row) {
+            return [$row[0] => $row[1]];
+        }, $results->rows);
+    }
+
+    /**
+     * Get total views for specific period .
+     *
+     * @param string $start
+     * @param string $end
+     * @param string $max
+     * @return mixed
+     */
+    public function totalViews($start = '', $end = '', $max = '') {
+        $results = $this->performQuery($start, $end, 'ga:pageviews', $this->getviewId(), ['dimensions' => 'ga:date']);
+
+        return array_map(function($row) {
+            return [$row[0] => $row[1]];
+        }, $results->rows);
     }
 }
