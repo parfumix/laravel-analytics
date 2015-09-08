@@ -72,6 +72,7 @@ class Google extends Driver implements DriverAble {
         return $this->viewId;
     }
 
+
     /**
      * Perform query .
      *
@@ -88,6 +89,22 @@ class Google extends Driver implements DriverAble {
             isset($viewId) ? $viewId : $this->getviewId(),
             $start,
             $end,
+            $metrics,
+            $others
+        );
+    }
+
+    /**
+     * Perform real time query .
+     *
+     * @param $metrics
+     * @param null $viewId
+     * @param array $others
+     * @return mixed
+     */
+    protected function performRealTimeQuery($metrics, $viewId = null, array $others = []) {
+        return $this->getSdk()->data_realtime->get(
+            isset($viewId) ? $viewId : $this->getviewId(),
             $metrics,
             $others
         );
@@ -121,11 +138,70 @@ class Google extends Driver implements DriverAble {
      * @param string $max
      * @return mixed
      */
-    public function totalViews($start = '', $end = '', $max = '') {
+    public function totalViews($start, $end = null, $max = null) {
         $results = $this->performQuery($start, $end, 'ga:pageviews', $this->getviewId(), ['dimensions' => 'ga:date']);
 
         return array_map(function($row) {
             return [$row[0] => $row[1]];
         }, $results->rows);
+    }
+
+    /**
+     * Get top browsers .
+     *
+     * @param $start
+     * @param null $end
+     * @return array
+     */
+    public function topBrowsers($start, $end = null) {
+        $results = $this->performQuery($start, $end, 'ga:sessions', $this->getviewId(), ['dimensions' => 'ga:browser', 'sort' => '-ga:sessions']);
+
+        return array_map(function($row) {
+            return ['browser' => $row[0], 'sessions' => $row[1]];
+        }, $results->rows);
+    }
+
+    /**
+     * Get most visited pages .
+     *
+     * @param $start
+     * @param null $end
+     * @param null $max
+     * @return array
+     */
+    public function mostVisitedPages($start, $end = null, $max = null) {
+        $results = $this->performQuery($start, $end, 'ga:pageviews', $this->getviewId(), ['dimensions' => 'ga:pagePath', 'sort' => '-ga:pageviews', 'max-results' => $max]);
+
+        return array_map(function($row) {
+            return ['url' => $row[0], 'pageViews' => $row[1]];
+        }, $results->rows);
+    }
+
+    /**
+     * Get top keywords .
+     *
+     * @param $start
+     * @param null $end
+     * @param null $max
+     * @return array
+     */
+    public function topKeyWords($start, $end = null, $max = null) {
+        $results = $this->performQuery($start, $end, 'ga:sessions', $this->getviewId(), ['dimensions' => 'ga:keyword', 'sort' => '-ga:sessions', 'max-results' => $max, 'filters' => 'ga:keyword!=(not set);ga:keyword!=(not provided)']);
+
+        return array_map(function($row) {
+            return ['keyword' => $row[0], 'sessions' => $row[1]];
+        }, $results->rows);
+    }
+
+    /**
+     * Get active users .
+     *
+     * @param array $others
+     * @return mixed
+     */
+    public function activeUsers($others = array()) {
+        $results = $this->performRealTimeQuery('rt:activeUsers', $others);
+
+        return $results;
     }
 }
