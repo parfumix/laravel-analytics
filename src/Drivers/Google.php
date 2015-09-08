@@ -11,6 +11,11 @@ use Laravel\Analytics\DriverAble;
 class Google extends Driver implements DriverAble {
 
     /**
+     * @var
+     */
+    protected $profileId;
+
+    /**
      * Set sdk .
      *
      * @return mixed
@@ -37,6 +42,31 @@ class Google extends Driver implements DriverAble {
 
         $this->setSdk($service);
 
+        if( $this->has('profile_id') )
+            $this->setProfileId('profile_id');
+
         return $this;
+    }
+
+
+    /**
+     * Set profile ID .
+     *
+     * @param $profileId
+     * @return $this
+     */
+    public function setProfileId($profileId) {
+        $this->profileId = 'ga:' . $profileId;
+
+        return $this;
+    }
+
+    /**
+     * Get profile ID .
+     *
+     * @return mixed
+     */
+    public function getProfileId() {
+        return $this->profileId;
     }
 }
