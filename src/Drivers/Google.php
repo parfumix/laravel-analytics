@@ -83,7 +83,10 @@ class Google extends Driver implements DriverAble {
      * @param array $others
      * @return mixed
      */
-    protected function performQuery($start, $end, $metrics, $viewId = null, array $others = array()) {
+    protected function performQuery($start, $end = '', $metrics, $viewId = null, array $others = array()) {
+        if( is_null($end) )
+            $end = date('Y-m-d');
+
         #@todo use cache for future .
         return $this->getSdk()->data_ga->get(
             isset($viewId) ? $viewId : $this->getviewId(),
@@ -120,14 +123,11 @@ class Google extends Driver implements DriverAble {
      * @return mixed
      */
     public function totalVisitors($start, $end = null, $max = null) {
-        if( is_null($end) )
-            $end = date('Y-m-d');
-
         $results = $this->performQuery($start, $end, 'ga:visits', $this->getviewId(), ['dimensions' => 'ga:date']);
 
         return array_map(function($row) {
             return [$row[0] => $row[1]];
-        }, $results->rows);
+        }, (array)$results->rows);
     }
 
     /**
@@ -143,7 +143,7 @@ class Google extends Driver implements DriverAble {
 
         return array_map(function($row) {
             return [$row[0] => $row[1]];
-        }, $results->rows);
+        }, (array)$results->rows);
     }
 
     /**
@@ -158,7 +158,7 @@ class Google extends Driver implements DriverAble {
 
         return array_map(function($row) {
             return ['browser' => $row[0], 'sessions' => $row[1]];
-        }, $results->rows);
+        }, (array)$results->rows);
     }
 
     /**
@@ -174,7 +174,7 @@ class Google extends Driver implements DriverAble {
 
         return array_map(function($row) {
             return ['url' => $row[0], 'pageViews' => $row[1]];
-        }, $results->rows);
+        }, (array)$results->rows);
     }
 
     /**
@@ -190,7 +190,7 @@ class Google extends Driver implements DriverAble {
 
         return array_map(function($row) {
             return ['keyword' => $row[0], 'sessions' => $row[1]];
-        }, $results->rows);
+        }, (array)$results->rows);
     }
 
     /**
