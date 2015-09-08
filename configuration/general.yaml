@@ -1,0 +1,7 @@
+# here will be declared default driver .
+default: google
+
+# here you can declare you drivers .
+drivers:
+  google:
+    - class: Laravel\Analytics\Drivers\Google
