@@ -43,7 +43,9 @@ class Google extends Driver implements DriverAble {
         $this->setSdk($service);
 
         if( $this->has('profile_id') )
-            $this->setProfileId('profile_id');
+            $this->setProfileId(
+                $this->get('profile_id')
+            );
 
         return $this;
     }
