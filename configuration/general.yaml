@@ -5,6 +5,7 @@ default: google
 drivers:
   google:
     class: Laravel\Analytics\Drivers\Google
-    client_id: your_client_id
-    email_address: email_address_services_account
-    certificate: path_to_certificate
+    profile_id: 67296338
+    client_id: 785467129718-c7kbmua3blh4jdflelaeion1qjkkdose.apps.googleusercontent.com
+    email_address: 785467129718-c7kbmua3blh4jdflelaeion1qjkkdose@developer.gserviceaccount.com
+    certificate: radu1989bordei-c2a0e17320f4.p12
