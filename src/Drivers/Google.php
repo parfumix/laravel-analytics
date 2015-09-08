@@ -17,17 +17,20 @@ class Google extends Driver implements DriverAble {
      */
     public function buildSdk() {
         $client = new Google_Client();
-        $client->setApplicationName('My cool application');
+        $client->setApplicationName('Google Analytics Application');
         $client->setAssertionCredentials(
             new Google_Auth_AssertionCredentials(
                 $this->get('email_address'),
-                array('https://www.googleapis.com/auth/analytics.readonly'),
+                array(Google_Service_Analytics::ANALYTICS_READONLY),
                 file_get_contents(storage_path(
                     $this->get('certificate')
                 ))
             ));
 
-        $client->setClientId($this->get('clien_id'));
+        $client->setClientId(
+            $this->get('client_id')
+        );
+
         $client->setAccessType('offline_access');
 
         $service = new Google_Service_Analytics($client);
