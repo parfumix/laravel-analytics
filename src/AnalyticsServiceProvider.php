@@ -22,7 +22,17 @@ class AnalyticsServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
+        $this->loadConfiguration();
 
+        Support\merge_yaml_config_from(
+            config_path('yaml/analytics/general.yaml') , 'laravel-analytics'
+        );
+
+        $this->app->singleton('analytic-manager', function() {
+           return new DriverManager(
+               config('laravel-analytics')
+           );
+        });
     }
 
     /**
