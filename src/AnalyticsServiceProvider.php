@@ -12,7 +12,7 @@ class AnalyticsServiceProvider extends ServiceProvider {
      */
     public function boot() {
         $this->publishes([
-            __DIR__.'/../assets/configuration' => config_path('yaml/analytics'),
+            __DIR__.'/../configuration' => config_path('yaml/analytics'),
         ]);
     }
 
